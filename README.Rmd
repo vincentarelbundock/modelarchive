@@ -2,7 +2,8 @@
 
 ## `brms`
 
-```r
+```{r}
+#| eval: false
 library("brms")
 
 dat <- mtcars
@@ -55,6 +56,26 @@ brms_vdem <- suppressWarnings(brm(
   backend = "cmdstanr",
   control = list(adapt_delta = 0.9)))
 
+# lognormal
+library(tidyverse)
+library(brms)
+library(gapminder)
+
+set.seed(1234)
+gapminder <- gapminder::gapminder |> 
+  filter(continent != "Oceania") |> 
+  # Make a bunch of GDP values 0
+  mutate(prob_zero = ifelse(lifeExp < 50, 0.3, 0.02),
+         will_be_zero = rbinom(n(), 1, prob = prob_zero),
+         gdpPercap0 = ifelse(will_be_zero, 0, gdpPercap)) |> 
+  select(-prob_zero, -will_be_zero)
+
+brms_lognormal_hurdle <- brm(
+  bf(gdpPercap0 ~ lifeExp, hu ~ lifeExp),
+  data = gapminder,
+  family = hurdle_lognormal(),
+  chains = 4, cores = 4, seed = 1234,
+  backend = "cmdstanr")
 
 # downloaded from the easystats circus and hosted here as stable duplicate
 brms_mv_1 <- insight::download_model("brms_mv_1")
