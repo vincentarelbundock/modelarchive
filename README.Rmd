@@ -57,6 +57,14 @@ brms_binomial <- brms::brm(
     prior = prior(normal(0, 1.5), class = "b"))
 
 
+set.seed(1024)
+brms_lognormal_hurdle2 <- brm(
+    bf(mpg ~ disp, hu ~ disp),
+    data = mtcars,
+    family = hurdle_lognormal(),
+    seed = 1024,
+    silent = 2)
+
 # epi
 prior1 <- prior(normal(0, 10), class = b) + prior(cauchy(0, 2), class = sd)
 brms_epi <- brm(count ~ zAge + zBase * Trt + (1 | patient), backend = "cmdstanr",
