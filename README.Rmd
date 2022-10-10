@@ -11,6 +11,7 @@ dat$logic <- as.logical(dat$vs)
 dat$cyl_fac <- as.factor(dat$cyl)
 dat$cyl_cha <- as.character(dat$cyl)
 
+
 brms_numeric <- brm(am ~ hp, data = dat, family = bernoulli(), backend = "cmdstanr",
                seed = 1024, silent = 2, chains = 4, iter = 1000)
 
@@ -105,4 +106,12 @@ brms_lognormal_hurdle <- brm(
 # downloaded from the easystats circus and hosted here as stable duplicate
 brms_mv_1 <- insight::download_model("brms_mv_1")
 brms_categorical_1 <- insight::download_model("brms_categorical_1")
+
+
+# logit with random effects
+dat <- read.csv("https://vincentarelbundock.github.io/Rdatasets/csv/plm/EmplUK.csv")
+dat$x <- as.numeric(dat$output > median(dat$output))
+dat$y <- as.numeric(dat$emp > median(dat$emp))
+brms_logit_re <- brm(y ~ x + (1 | firm), data = dat, backend = "cmdstanr", family = "bernoulli")
+saveRDS(brms_logit_re, "data/brms_logit_re.rds")
 ```
