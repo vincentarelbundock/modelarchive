@@ -58,6 +58,7 @@ brms_binomial <- brms::brm(
     prior = prior(normal(0, 1.5), class = "b"))
 
 
+
 set.seed(1024)
 brms_lognormal_hurdle2 <- brm(
     bf(mpg ~ disp, hu ~ disp),
@@ -65,6 +66,10 @@ brms_lognormal_hurdle2 <- brm(
     family = hurdle_lognormal(),
     seed = 1024,
     silent = 2)
+
+brms_inhaler_cat <- brm(rating ~ cs(treat),
+  data = inhaler, family = acat(),
+  iter = 1000)
 
 # epi
 prior1 <- prior(normal(0, 10), class = b) + prior(cauchy(0, 2), class = sd)
